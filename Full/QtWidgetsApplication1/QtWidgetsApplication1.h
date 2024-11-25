@@ -3,15 +3,20 @@
 
 #include <QtWidgets/QMainWindow>
 #include "ui_QtWidgetsApplication1.h"
+
 #include <k4a/k4a.hpp>
 #include <k4arecord/record.hpp>
+
 #include <opencv2/opencv.hpp>
+
 #include <QImage>
 #include <QPixmap>
+#include <QTcpSocket>  // Per gestire il socket TCP
+#include <QFileDialog>
+
 #include <iostream>
 #include <atomic>
 #include <thread>
-#include <QTcpSocket>  // Per gestire il socket TCP
 
 class QtWidgetsApplication1 : public QMainWindow
 {
@@ -26,6 +31,7 @@ private slots:
     void on_startRecordingButton_clicked();  // Slot for Start Recording
     void on_stopRecordingButton_clicked();   // Slot for Stop Recording
     void sendCommandToServer(const QString& command);
+    void on_offlineProcess_clicked();
 
 private:
     //Puntatore alla classe generata da Qt Designer che gestisce l'interfaccia utente.
@@ -46,6 +52,8 @@ private:
     k4a_device_configuration_t config;
 
     QTcpSocket* tcpSocket;
+
+    void updateUI(k4a::capture&);
 };
 
 #endif // QTWIDGETSAPPLICATION1_H

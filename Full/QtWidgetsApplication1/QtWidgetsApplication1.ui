@@ -16,7 +16,7 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,4">
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout" stretch="1,1,1,1,10">
+     <layout class="QVBoxLayout" name="verticalLayout" stretch="1,1,1,1,1,1,10">
       <item>
        <widget class="QLabel" name="label">
         <property name="font">
@@ -59,7 +59,7 @@
          </font>
         </property>
         <property name="title">
-         <string>Kinect Controls</string>
+         <string>Online recording</string>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_3">
          <item>
@@ -101,6 +101,45 @@
            </property>
            <property name="text">
             <string>Stop Recording</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="font">
+         <font>
+          <pointsize>15</pointsize>
+         </font>
+        </property>
+        <property name="title">
+         <string>Offline processing</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_4">
+         <item>
+          <widget class="QPushButton" name="pushButtoprocessfileP">
+           <property name="font">
+            <font>
+             <pointsize>17</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Processa Registrazione</string>
            </property>
           </widget>
          </item>
