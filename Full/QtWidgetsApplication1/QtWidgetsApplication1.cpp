@@ -51,7 +51,7 @@ void QtWidgetsApplication1::on_avviaKinect_clicked()
     device = k4a::device::open(K4A_DEVICE_DEFAULT);
     device.start_cameras(&config);
 
-    isCapturing = true;;
+    isCapturing = true;
 
     captureThread = new std::thread([this]() {
         while (isCapturing)
@@ -109,7 +109,7 @@ void QtWidgetsApplication1::on_avviaKinect_clicked()
                         }, Qt::QueuedConnection);
                 }
             }
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            //std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
 
         // Assicurarsi di chiudere la camera fuori dal loop
@@ -132,6 +132,7 @@ void QtWidgetsApplication1::sendCommandToServer(const QString& command)
     QByteArray data = command.toUtf8();
     tcpSocket->write(data);
     tcpSocket->waitForBytesWritten(1000);
+    tcpSocket->close();
 }
 
 void QtWidgetsApplication1::on_startRecordingButton_clicked()

@@ -4,3 +4,14 @@
 /Interfaccia + emg 20_11/x64
 /Versione con comunicazione/.vs
 /Versione senza comunicazione/.vs
+/EMG_AcqProject/.vs
+/EMG_AcqProject/EMG_Acq/Debug
+*.vcxproj
+*.filters
+*.user
+/EMG_AcqProject/EMG_Acq/Release
+/EMG_AcqProject/Release
+/Full/.vs
+/Full/QtWidgetsApplication1/x64
+/Full/x64
+Full/QtWidgetsApplication1/prova.mkv

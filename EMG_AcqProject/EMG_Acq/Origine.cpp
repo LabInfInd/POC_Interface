@@ -42,11 +42,10 @@ using namespace mscorlib;
 using namespace bts_biodaq_core;
 using namespace bts_biodaq_drivers;
 
-
-void startTcpServer()
+void initTCPServer(SOCKET& listeningSocket, SOCKET& clientSocket)
 {
     WSADATA wsaData;
-    SOCKET listeningSocket = INVALID_SOCKET, clientSocket = INVALID_SOCKET;
+    /* SOCKET listeningSocket = INVALID_SOCKET, clientSocket = INVALID_SOCKET;*/
     sockaddr_in serverAddr = { 0 }, clientAddr = { 0 };
     int clientAddrLen = sizeof(clientAddr);
 
@@ -87,6 +86,51 @@ void startTcpServer()
 
     printf("Server in ascolto sulla porta 12345...\n");
 
+}
+void CloseTCPServer(SOCKET& listeningSocket, SOCKET& clientSocket)
+{
+    printf("Server arrestato.\n");
+    closesocket(listeningSocket);
+    WSACleanup();
+}
+
+void stopTcpServer(SOCKET& listeningSocket, SOCKET& clientSocket)
+{
+    sockaddr_in serverAddr = { 0 }, clientAddr = { 0 };
+    int clientAddrLen = sizeof(clientAddr);
+
+    while (true) {
+        // Accetta una connessione
+        clientSocket = accept(listeningSocket, (sockaddr*)&clientAddr, &clientAddrLen);
+        if (clientSocket == INVALID_SOCKET) {
+            printf("Errore: impossibile accettare la connessione.\n");
+            continue;
+        }
+
+        printf("Connessione stabilita con un client.\n");
+
+        char buffer[1024] = { 0 };
+        int bytesRead = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
+        if (bytesRead > 0) {
+            buffer[bytesRead] = '\0';
+            printf("Messaggio ricevuto: %s\n", buffer);
+
+            // Comandi dal client
+            if (strcmp(buffer, "Stop") == 0) {
+                printf("Acquisizione stoppata.\n");
+                return;
+            }
+        }
+
+        closesocket(clientSocket); // Chiude la connessione con il client
+    }
+}
+
+void startTcpServer(SOCKET& listeningSocket, SOCKET& clientSocket)
+{
+    sockaddr_in serverAddr = { 0 }, clientAddr = { 0 };
+    int clientAddrLen = sizeof(clientAddr);
+
     while (true) {
         // Accetta una connessione
         clientSocket = accept(listeningSocket, (sockaddr*)&clientAddr, &clientAddrLen);
@@ -106,93 +150,25 @@ void startTcpServer()
             // Comandi dal client
             if (strcmp(buffer, "Start") == 0) {
                 printf("Acquisizione avviata.\n");
+                return;
             }
-
-            else if (strcmp(buffer, "Stop") == 0) {
-                printf("Acquisizione arrestata.\n");
-                break; // Esci dal loop per terminare il server
-            }
-
-            // Rispondi al client
-            const char* response = "Comando ricevuto";
-            send(clientSocket, response, strlen(response), 0);
         }
 
         closesocket(clientSocket); // Chiude la connessione con il client
     }
 
-    printf("Server arrestato.\n");
-    closesocket(listeningSocket);
-    WSACleanup();
 }
 
-//    // Accetta una connessione
-//    clientSocket = accept(listeningSocket, (sockaddr*)&clientAddr, &clientAddrLen);
-//    if (clientSocket == INVALID_SOCKET) {
-//        printf("Errore: impossibile accettare la connessione.\n");
-//        closesocket(listeningSocket);
-//        WSACleanup();
-//        return;
-//    }
-//
-//    printf("Connessione stabilita con un client.\n");
-//
-//    // Riceve dati dal client
-//    char buffer[1024] = { 0 };
-//
-//    bool running = true;
-//
-//    while (running) {
-//        int bytesRead = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
-//        if (bytesRead > 0) {
-//            buffer[bytesRead] = '\0';
-//            printf("Comando ricevuto: %s\n", buffer);
-//
-//            // Gestisci i comandi ricevuti
-//            if (strcmp(buffer, "START") == 0) {
-//                printf("Avvio della registrazione...\n");
-//                BioDAQExitStatus errCode = ptrBioDAQ->Record();
-//                if (errCode != BioDAQExitStatus_Success) {
-//                    printf("Errore durante l'avvio della registrazione.\n");
-//                }
-//                else {
-//                    printf("Registrazione avviata con successo.\n");
-//                }
-//            }
-//            else if (strcmp(buffer, "STOP") == 0) {
-//                printf("Interruzione della registrazione...\n");
-//                BioDAQExitStatus errCode = ptrBioDAQ->Stop();
-//                if (errCode != BioDAQExitStatus_Success) {
-//                    printf("Errore durante l'interruzione della registrazione.\n");
-//                }
-//                else {
-//                    printf("Registrazione interrotta con successo.\n");
-//                }
-//                running = false;  // Termina il loop
-//            }
-//        }
-//    }
-//
-//    // Chiudi i socket
-//    closesocket(clientSocket);
-//    closesocket(listeningSocket);
-//    WSACleanup();
-//}
+int main_complete() {
 
-
-int _tmain(int argc, _TCHAR* argv[])
-{
+    SOCKET listeningSocket = INVALID_SOCKET, clientSocket = INVALID_SOCKET;
+    initTCPServer(listeningSocket, clientSocket);
 
     // Make sure to add USES_CONVERSION for using ATL string conversion macros
     USES_CONVERSION;
 
     // Make sure to add the CoInitializeEx() call when the application loads
     CoInitializeEx(NULL, COINIT_MULTITHREADED);
-
-    printf("Inizializzazione del server TCP/IP...\n");
-    // Avvia il server TCP/IP per ricevere messaggi
-    startTcpServer();
-    printf("Server TCP/IP terminato. Inizializzo il dispositivo BioDAQ...\n");
 
     printf("Create a USB COM port where BioDAQ device is connected...\n");
 
@@ -222,8 +198,8 @@ int _tmain(int argc, _TCHAR* argv[])
     // Create BM View list and BM View objects
     IBMViewListPtr bmViewList;
     IBMViewPtr  bmView;
-     //printf("Numero Sensori Connessi: %ld\n", sensorCount); 
-        printf("Initializing BioDAQ device...\n");
+    //printf("Numero Sensori Connessi: %ld\n", sensorCount); 
+    printf("Initializing BioDAQ device...\n");
 
     //// Instantiate the BioDAQ 
     IBioDAQPtr ptrBioDAQ(__uuidof(BioDAQ));
@@ -313,7 +289,7 @@ int _tmain(int argc, _TCHAR* argv[])
     long nChannels = chViewList->Count;
     // printf("%d\n", nChannels);
         // Set properties for all channels
-        chViewList->SetEMGChannelsRangeCode(EMGChannelRangeCodes_Gain1_5mV);   // EMG channel range
+    chViewList->SetEMGChannelsRangeCode(EMGChannelRangeCodes_Gain1_5mV);   // EMG channel range
     chViewList->SetEMGChannelsSamplingRate(SamplingRate_Rate1KHz);         // Sampling rate: 1 kHz
     chViewList->SetEMGChannelsCodingType(CodingType_Raw);
     chViewList->SetEMGChannelsCompression(true);                           // Coding type: ADPCM
@@ -354,27 +330,6 @@ int _tmain(int argc, _TCHAR* argv[])
     ISensorViewDictionaryEnumPtr ptrSensorViewDictionaryEnum;
     ptrSensorViewDictionaryEnum = ptrSensorViewDictionary->GetEnumerator();
 
-
-    for (int i = 0; i < sensorCount; ++i) {
-        bool result = (ptrSensorViewDictionaryEnum->MoveNext() == VARIANT_TRUE);
-        if (!result) {
-            printf("Errore nell'ottenere le informazioni della sonda %d.\n", i + 1);
-            continue;
-        }
-
-        sensor = ptrSensorViewDictionaryEnum->Current;
-
-        bool isConnected = sensor->GetConnected();
-
-        // Incrementa il contatore solo se la sonda è effettivamente connessa
-        if (isConnected) {
-            activeSensorCount++;
-        }
-    }
-
-    printf("Numero di sonde effettivamente connesse e accese: %ld\n", activeSensorCount);
-    printf("Starting BioDAQ device...\n");
-
     //printf("Inizializzazione del server TCP/IP...\n");
     //// Avvia il server TCP/IP per ricevere messaggi
     //startTcpServer(ptrBioDAQ);
@@ -400,9 +355,9 @@ int _tmain(int argc, _TCHAR* argv[])
 
     // Sleep a bit
     Sleep(2000);
+    startTcpServer(listeningSocket, clientSocket);
+
     printf("Recording data...\n");
-
-
 
     errCode = ptrBioDAQ->Record();
     if (BioDAQExitStatus_Success != errCode)
@@ -410,102 +365,7 @@ int _tmain(int argc, _TCHAR* argv[])
         printf("Failed: unable to record data\n");
     }
 
-    BattLevel a;
-    SAFEARRAY* address_get;
-    bool isConn;
-    bool stopRecording = false;
-    for (int j = 0; j < 50 && !stopRecording; j++)
-    {
-        ptrSensorViewDictionaryEnum->Reset();
-
-        for (int i = 0; i <= activeSensorCount - 1; i++)
-        {
-            printf("\n");
-
-            bool bResult = (ptrSensorViewDictionaryEnum->MoveNext() == VARIANT_TRUE) ? true : false;
-            if (!bResult)
-            {
-                printf("Failed: invalid operation...\n");
-                printf("Press a key to exit...\n");
-                _gettch();
-
-                // roll-back
-                ptrBioDAQ->Reset();
-                ptrBioDAQ->Release();
-                bmViewList->Release();
-                ptrCOMPort->Release();
-                return 0;
-            }
-
-            ptrBioDAQ->UpdateStatusInfo();
-            sensor = ptrSensorViewDictionaryEnum->Current;
-            printf("%s\n", address_get);
-
-            a = sensor->GetBattLevel();
-            isConn = sensor->GetConnected();
-
-            const char* battLevelStr;
-
-            switch (a) {
-            case 1:
-                battLevelStr = "Livello batteria inferiore al 25% della massima carica";
-                break;
-            case 2:
-                battLevelStr = "Livello batteria compreso tra il 25% ed il 50% della massima carica";
-                break;
-            case 3:
-                battLevelStr = "Livello batteria compreso tra il 50% ed il 75% della massima carica";
-                break;
-            case 4:
-                battLevelStr = "Livello batteria superiore al 75% della massima carica";
-                break;
-            default:
-                battLevelStr = "Livello di batteria sconosciuto";
-                break;
-            }
-
-            const char* isConnStr;
-            switch (isConn) {
-            case 0:
-                isConnStr = "Sonda NON Connessa";
-                break;
-            case 1:
-                isConnStr = "Sonda Connessa";
-                break;
-            default:
-                isConnStr = "Livello di connessione sconosciuto";
-                break;
-            }
-
-
-            if (isConn == 0)
-            {
-                errCode = ptrBioDAQ->Stop();
-
-                if (BioDAQExitStatus_Success != errCode)
-                {
-
-                    printf("Failed: unable to stop BioDAQ device\n");
-                    printf("%d\n", errCode);
-                }
-                printf("La registrazione viene interrotta a causa di un'interruzione nella connessione della sonda %d..\n", i + 1);
-                stopRecording = true;  // Imposta il flag per fermare il ciclo esterno
-                break;  // Esci dal ciclo interno
-
-            }
-
-
-            printf("Sonda %d: %s - %s\n", i + 1, isConnStr, battLevelStr);
-        }
-        // --------------------------------------------------------------------------
-        // 
-
-
-        // Sleep a bit
-        printf("\n");
-        Sleep(1000);
-    }
-
+    stopTcpServer(listeningSocket, clientSocket);
     printf("Stopping BioDAQ device...\n");
 
     // Stop acquisition
@@ -576,5 +436,38 @@ int _tmain(int argc, _TCHAR* argv[])
     _gettch();
 
     CoUninitialize();
+
+    CloseTCPServer(listeningSocket, clientSocket);
+
+    return 0;
+
+}
+
+int _tmain(int argc, _TCHAR* argv[])
+{
+
+    int communication_only = false;
+    
+    if (communication_only) {
+        main_complete();
+    }
+    else {
+        SOCKET listeningSocket = INVALID_SOCKET, clientSocket = INVALID_SOCKET;
+        initTCPServer(listeningSocket, clientSocket);
+
+        // Sleep a bit
+        Sleep(2000);
+        startTcpServer(listeningSocket, clientSocket);
+
+        printf("Recording data...\n");
+
+        stopTcpServer(listeningSocket, clientSocket);
+        printf("Stopping BioDAQ device...\n");
+
+        Sleep(2000);
+
+        CloseTCPServer(listeningSocket, clientSocket);
+    }
+
     return 0;
 }
