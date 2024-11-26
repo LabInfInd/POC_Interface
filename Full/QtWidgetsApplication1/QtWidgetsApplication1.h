@@ -5,6 +5,7 @@
 #include "ui_QtWidgetsApplication1.h"
 
 #include <k4a/k4a.hpp>
+#include <k4abt.h>
 #include <k4arecord/record.hpp>
 
 #include <opencv2/opencv.hpp>
@@ -37,19 +38,21 @@ private:
     //Puntatore alla classe generata da Qt Designer che gestisce l'interfaccia utente.
     Ui::QtWidgetsApplication1Class* ui;
 
-    k4a::device device;
-
     // utilizzato per gestire il thread di cattura
     std::thread* captureThread;
 
-    //Variabile atomica booleana che indica se il thread di cattura è attualmente in esecuzione.Questo è utile per la gestione sicura del threading
+    //Variabile atomica booleana che indica se il thread di cattura ï¿½ attualmente in esecuzione.Questo ï¿½ utile per la gestione sicura del threading
     std::atomic<bool> isCapturing;
 
     std::atomic<bool> isRecording;
 
+    k4a::device device;
+
     k4a::record recording;
 
-    k4a_device_configuration_t config;
+    k4a_device_configuration_t config = K4A_DEVICE_CONFIG_INIT_DISABLE_ALL;
+
+    k4abt_tracker_configuration_t tracker_config = K4ABT_TRACKER_CONFIG_DEFAULT;
 
     QTcpSocket* tcpSocket;
 

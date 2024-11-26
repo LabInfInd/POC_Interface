@@ -9,7 +9,7 @@ QtWidgetsApplication1::QtWidgetsApplication1(QWidget* parent)
     isRecording = false;
     tcpSocket = new QTcpSocket(this);
 
-    config = K4A_DEVICE_CONFIG_INIT_DISABLE_ALL;
+    tracker_config.processing_mode = K4ABT_TRACKER_PROCESSING_MODE_GPU_CUDA;
 
     ui->setupUi(this);
 
@@ -40,7 +40,7 @@ void QtWidgetsApplication1::on_avviaKinect_clicked()
 {
     if (isCapturing)
     {
-        return; // Se già in acquisizione, non fare nulla
+        return; // Se giï¿½ in acquisizione, non fare nulla
     }
 
     // Inizializza la configurazione del dispositivo
