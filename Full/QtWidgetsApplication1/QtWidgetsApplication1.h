@@ -19,6 +19,8 @@
 #include <atomic>
 #include <thread>
 
+#include "VideoProcessor.h"
+
 class QtWidgetsApplication1 : public QMainWindow
 {
     Q_OBJECT

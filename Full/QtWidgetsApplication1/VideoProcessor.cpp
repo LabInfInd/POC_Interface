@@ -66,7 +66,7 @@ bool check_depth_image_exists(k4a_capture_t capture)
     }
 }
 
-bool process_mkv_offline(const char* input_path, const char* output_path, k4abt_tracker_configuration_t tracker_config = K4ABT_TRACKER_CONFIG_DEFAULT)
+bool process_mkv_offline(const char* input_path, const char* output_path, k4abt_tracker_configuration_t& tracker_config)
 {
     k4a_playback_t playback_handle = nullptr;
     k4a_result_t result = k4a_playback_open(input_path, &playback_handle);

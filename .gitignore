@@ -6,7 +6,6 @@
 /Versione senza comunicazione/.vs
 /EMG_AcqProject/.vs
 /EMG_AcqProject/EMG_Acq/Debug
-*.vcxproj
 *.filters
 *.user
 /EMG_AcqProject/EMG_Acq/Release

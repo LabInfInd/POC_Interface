@@ -24,4 +24,4 @@ bool predict_joints(json&, int, k4abt_tracker_t, k4a_capture_t);
 
 bool check_depth_image_exists(k4a_capture_t);
 
-bool process_mkv_offline(const char*, const char*, k4abt_tracker_configuration_t);
+bool process_mkv_offline(const char*, const char*, k4abt_tracker_configuration_t&);

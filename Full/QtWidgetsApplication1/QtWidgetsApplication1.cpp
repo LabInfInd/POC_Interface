@@ -9,7 +9,7 @@ QtWidgetsApplication1::QtWidgetsApplication1(QWidget* parent)
     isRecording = false;
     tcpSocket = new QTcpSocket(this);
 
-    tracker_config.processing_mode = K4ABT_TRACKER_PROCESSING_MODE_GPU_CUDA;
+    tracker_config.processing_mode = K4ABT_TRACKER_PROCESSING_MODE_GPU;
 
     ui->setupUi(this);
 
@@ -101,7 +101,14 @@ void QtWidgetsApplication1::on_offlineProcess_clicked()
         tr("Open Registration"), ".", tr("MKV Files (*.mkv)"));
     if (!file_path.isEmpty())
     {
+        QFileInfo info(file_path);
+        QString strNewName = info.path() + "/" + info.completeBaseName() + ".json";
 
+        if (process_mkv_offline(file_path.toStdString().c_str(), strNewName.toStdString().c_str(), tracker_config))
+            qDebug() << "Tutto ok;";
+        else
+            qDebug() << "Tutto Nok;";
+        
     }
 }
 
