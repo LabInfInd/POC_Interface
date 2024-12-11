@@ -162,7 +162,7 @@ void startTcpServer(SOCKET& listeningSocket, SOCKET& clientSocket)
 int main_complete() {
 
     SOCKET listeningSocket = INVALID_SOCKET, clientSocket = INVALID_SOCKET;
-    initTCPServer(listeningSocket, clientSocket);
+    //initTCPServer(listeningSocket, clientSocket);
 
     // Make sure to add USES_CONVERSION for using ATL string conversion macros
     USES_CONVERSION;
@@ -177,7 +177,7 @@ int main_complete() {
 
     // Create a COM Port with a given number 
     IPortCOMPtr ptrCOMPort(__uuidof(PortCOM));
-    ptrCOMPort->Number = 7;      // set the COM port number where BioDAQ device is connected (use Windows device manager tool)
+    ptrCOMPort->Number = 3;      // set the COM port number where BioDAQ device is connected (use Windows device manager tool)
 
     // Create the ports List
     IPortListPtr ptrPortList(__uuidof(PortList));
@@ -446,7 +446,7 @@ int main_complete() {
 int _tmain(int argc, _TCHAR* argv[])
 {
 
-    int communication_only = false;
+    int communication_only = true;
     
     if (communication_only) {
         main_complete();

@@ -14,3 +14,15 @@
 /Full/QtWidgetsApplication1/x64
 /Full/x64
 Full/QtWidgetsApplication1/prova.mkv
+*.dll
+*.exe
+*.pdb
+*.tlb
+*.vcxproj
+/Force_AcqProject/ForceReader/.vs
+/Force_AcqProject/ForceReader/Debug
+/Force_AcqProject/ForceReader/ForceReader/Debug
+/Force_AcqProject/ForceReader/ForceReader/x64
+/Full/build
+/Full/packages
+Full/QtWidgetsApplication1/prova_antonio.mkv
